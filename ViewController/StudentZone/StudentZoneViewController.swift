@@ -259,6 +259,13 @@ extension StudentZoneViewController: UICollectionViewDelegate,UICollectionViewDa
             let obj = self.storyboard?.instantiateViewController(withIdentifier: "PaymentHistoryVC")as! PaymentHistoryVC
             self.navigationController?.pushViewController(obj, animated: true)
         }
+        else if indexPath.row == 13{
+            NavigateVideoConference()
+        }
+        else if indexPath.row == 14{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "ConverstationsVC")as! ConverstationsVC
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

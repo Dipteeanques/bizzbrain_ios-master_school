@@ -14,4 +14,12 @@ target 'bizzbrains' do
  pod 'ReachabilitySwift'
  pod 'SwiftyStoreKit'
  pod 'DKImagePickerController'
+ pod 'SJSegmentedScrollView'
+ pod 'JJFloatingActionButton'
+ pod 'Kingfisher'
+ pod 'MessageKit'
+ pod 'Firebase/Core'
+ pod 'Firebase/Storage'
+ pod 'Firebase/Database'
+ pod 'Firebase/Firestore'
 end
