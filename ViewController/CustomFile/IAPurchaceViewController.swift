@@ -23,7 +23,7 @@ struct arrPlan {
 }
 
 
-class IAPurchaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SKProductsRequestDelegate, SKPaymentTransactionObserver {
+class IAPurchaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {//, SKProductsRequestDelegate, SKPaymentTransactionObserver
     @IBOutlet weak var activity: UIActivityIndicatorView!
     
     @IBOutlet weak var loaderView: UIView!
@@ -77,13 +77,13 @@ class IAPurchaceViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loaderView.isHidden = false
-        activity.startAnimating()
-        Getplan()
-        tblProducts.delegate = self
-        tblProducts.dataSource = self
-        requestProductInfo()
-        SKPaymentQueue.default().add(self)
+//        loaderView.isHidden = false
+//        activity.startAnimating()
+//        Getplan()
+//        tblProducts.delegate = self
+//        tblProducts.dataSource = self
+//        requestProductInfo()
+//        SKPaymentQueue.default().add(self)
     }
     
     func Getplan() {
@@ -184,172 +184,172 @@ class IAPurchaceViewController: UIViewController, UITableViewDelegate, UITableVi
    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedProductIndex = indexPath.row
-        showActions()
+//        showActions()
         tableView.cellForRow(at: indexPath as IndexPath)?.isSelected = false
     }
     
     
     // MARK: Custom method implementation
     
-    func requestProductInfo() {
-        let strSKU = arrCodeSKU.joined(separator: ",")
-        let productIdentifiers = Set([strSKU])
-        if SKPaymentQueue.canMakePayments() {
-            let request = SKProductsRequest(productIdentifiers: productIdentifiers)
-            request.delegate = self
-            request.start()
-        }
-        else {
-            print("Cannot perform In App Purchases.")
-        }
-    }
+//    func requestProductInfo() {
+//        let strSKU = arrCodeSKU.joined(separator: ",")
+//        let productIdentifiers = Set([strSKU])
+//        if SKPaymentQueue.canMakePayments() {
+//            let request = SKProductsRequest(productIdentifiers: productIdentifiers)
+////            request.delegate = self
+//            request.start()
+//        }
+//        else {
+//            print("Cannot perform In App Purchases.")
+//        }
+//    }
     
-    func dismissAlert(){
-        self.alert.dismiss(animated: true, completion: nil)
-    }
+//    func dismissAlert(){
+//        self.alert.dismiss(animated: true, completion: nil)
+//    }
     
-    func PopUpLoader() {
-        alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
-        alert.view.tintColor = UIColor.black
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50)) as UIActivityIndicatorView
-        loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.style = UIActivityIndicatorView.Style.gray
-        loadingIndicator.startAnimating();
-        alert.view.addSubview(loadingIndicator)
-        present(alert, animated: true, completion: nil)
-    }
+//    func PopUpLoader() {
+//        alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
+//        alert.view.tintColor = UIColor.black
+//        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50)) as UIActivityIndicatorView
+//        loadingIndicator.hidesWhenStopped = true
+//        loadingIndicator.style = UIActivityIndicatorView.Style.gray
+//        loadingIndicator.startAnimating();
+//        alert.view.addSubview(loadingIndicator)
+//        present(alert, animated: true, completion: nil)
+//    }
     
     
-    func showActions() {
-        if transactionInProgress {
-            return
-        }
-        
-        let actionSheetController = UIAlertController(title: "Bizzbrains", message: "What do you want to do?", preferredStyle: UIAlertController.Style.actionSheet)
-        
-        let buyAction = UIAlertAction(title: "Buy", style: UIAlertAction.Style.default) { (action) -> Void in
-            self.PopUpLoader()
-            
-            let payment = SKPayment(product: self.productsArray[self.selectedProductIndex])
-            print(payment)
-            SKPaymentQueue.default().add(payment)
-            self.transactionInProgress = true
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (action) -> Void in
-            self.dismissAlert()
-        }
-        
-        actionSheetController.addAction(buyAction)
-        actionSheetController.addAction(cancelAction)
-        present(actionSheetController, animated: true, completion: nil)
-    }
+//    func showActions() {
+//        if transactionInProgress {
+//            return
+//        }
+//
+//        let actionSheetController = UIAlertController(title: "Bizzbrains", message: "What do you want to do?", preferredStyle: UIAlertController.Style.actionSheet)
+//
+//        let buyAction = UIAlertAction(title: "Buy", style: UIAlertAction.Style.default) { (action) -> Void in
+//            self.PopUpLoader()
+//
+//            let payment = SKPayment(product: self.productsArray[self.selectedProductIndex])
+//            print(payment)
+//            SKPaymentQueue.default().add(payment)
+//            self.transactionInProgress = true
+//        }
+//
+//        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (action) -> Void in
+//            self.dismissAlert()
+//        }
+//
+//        actionSheetController.addAction(buyAction)
+//        actionSheetController.addAction(cancelAction)
+//        present(actionSheetController, animated: true, completion: nil)
+//    }
     
     
     // MARK: SKProductsRequestDelegate method implementation
+//
+//    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+//        print(response)
+//        if response.products.count != 0 {
+//            for product in response.products {
+//                productsArray.append(product)
+//                DispatchQueue.main.async {
+//                    self.tblProducts.reloadData()
+//                    self.loaderView.isHidden = true
+//                    self.activity.stopAnimating()
+//                }
+//            }
+//        }
+//        else {
+//            print("There are no products.")
+//        }
+//
+//        if response.invalidProductIdentifiers.count != 0 {
+//            print(response.invalidProductIdentifiers.description)
+//        }
+//    }
     
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print(response)
-        if response.products.count != 0 {
-            for product in response.products {
-                productsArray.append(product)
-                DispatchQueue.main.async {
-                    self.tblProducts.reloadData()
-                    self.loaderView.isHidden = true
-                    self.activity.stopAnimating()
-                }
-            }
-        }
-        else {
-            print("There are no products.")
-        }
-        
-        if response.invalidProductIdentifiers.count != 0 {
-            print(response.invalidProductIdentifiers.description)
-        }
-    }
-    
-    func TransectionSucess(strstatus: String,strTxtid: String,strJson: String) {
-        let jsonEncoder = JSONEncoder()
-                  do {
-                      let jsonData = try jsonEncoder.encode(arrPayment)
-                      jsonString = String(data: jsonData, encoding: .utf8)!
-                      print("JSON String : " + jsonString)
-                  }
-                  catch {
-                      print("jekil")
-                  }
-                  let param = ["coupon_code":"",
-                               "amount":0,
-                               "discount": 0,
-                               "total_amount":0,
-                               "payment_txnid":"",
-                               "payment_status":"",
-                               "payment_response":"",
-                               "cart_data":jsonString,
-                               "type":""] as [String : Any]
-                  
-                  print(param)
-                  
-                  let token = loggdenUser.value(forKey: TOKEN)as! String
-                  let headers: HTTPHeaders = ["Xapi": Xapi,
-                                              "Authorization":token]
-                          
-                  AF.request(PAYMENT, method: .post, parameters: param, encoding: JSONEncoding.default,headers: headers)
-                      .responseJSON { response in
-                          print(response)
-                          let json = response.value as! NSDictionary
-                          let sucess = json.value(forKey: "success")as! Bool
-                          let message = json.value(forKey: "message")as! String
-                          if sucess == true {
-                              self.appDel.gotoTabbar()
-                              NotificationCenter.default.post(name: NSNotification.Name(rawValue: "gotoTabbar"), object: nil)
-                              loggdenUser.removeObject(forKey: CARTCOUNT)
-                              loggdenUser.removeObject(forKey: CARTVALUE)
-                              self.activity.isHidden = true
-                              self.activity.stopAnimating()
-                              //self.btnSubscribe.setTitle("Subscribe", for: .normal)
-                          }
-                          else {
-                              let uiAlert = UIAlertController(title: "Bizzbrains", message: message, preferredStyle: UIAlertController.Style.alert)
-                              self.present(uiAlert, animated: true, completion: nil)
-                              uiAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action in
-                                  self.activity.isHidden = true
-                                  self.activity.stopAnimating()
-                                //  self.btnSubscribe.setTitle("Subscribe", for: .normal)
-                              }))
-                          }
-                  }
-    }
+//    func TransectionSucess(strstatus: String,strTxtid: String,strJson: String) {
+//        let jsonEncoder = JSONEncoder()
+//                  do {
+//                      let jsonData = try jsonEncoder.encode(arrPayment)
+//                      jsonString = String(data: jsonData, encoding: .utf8)!
+//                      print("JSON String : " + jsonString)
+//                  }
+//                  catch {
+//                      print("jekil")
+//                  }
+//                  let param = ["coupon_code":"",
+//                               "amount":0,
+//                               "discount": 0,
+//                               "total_amount":0,
+//                               "payment_txnid":"",
+//                               "payment_status":"",
+//                               "payment_response":"",
+//                               "cart_data":jsonString,
+//                               "type":""] as [String : Any]
+//
+//                  print(param)
+//
+//                  let token = loggdenUser.value(forKey: TOKEN)as! String
+//                  let headers: HTTPHeaders = ["Xapi": Xapi,
+//                                              "Authorization":token]
+//
+//                  AF.request(PAYMENT, method: .post, parameters: param, encoding: JSONEncoding.default,headers: headers)
+//                      .responseJSON { response in
+//                          print(response)
+//                          let json = response.value as! NSDictionary
+//                          let sucess = json.value(forKey: "success")as! Bool
+//                          let message = json.value(forKey: "message")as! String
+//                          if sucess == true {
+//                              self.appDel.gotoTabbar()
+//                              NotificationCenter.default.post(name: NSNotification.Name(rawValue: "gotoTabbar"), object: nil)
+//                              loggdenUser.removeObject(forKey: CARTCOUNT)
+//                              loggdenUser.removeObject(forKey: CARTVALUE)
+//                              self.activity.isHidden = true
+//                              self.activity.stopAnimating()
+//                              //self.btnSubscribe.setTitle("Subscribe", for: .normal)
+//                          }
+//                          else {
+//                              let uiAlert = UIAlertController(title: "Bizzbrains", message: message, preferredStyle: UIAlertController.Style.alert)
+//                              self.present(uiAlert, animated: true, completion: nil)
+//                              uiAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action in
+//                                  self.activity.isHidden = true
+//                                  self.activity.stopAnimating()
+//                                //  self.btnSubscribe.setTitle("Subscribe", for: .normal)
+//                              }))
+//                          }
+//                  }
+//    }
     
   //  [productId: 549, transactionId: 1000000585837535, state: purchased, date: Optional(2019-10-30 07:17:28 +0000)]
     
     // MARK: SKPaymentTransactionObserver method implementation
-    
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        print(transactions)
-        for transaction in transactions {
-               switch transaction.transactionState {
-               case SKPaymentTransactionState.purchased:
-                   print("Transaction completed successfully.")
-                   SKPaymentQueue.default().finishTransaction(transaction)
-                   transactionInProgress = false
-                   dismissAlert()
-                  // TransectionSucess(strstatus: SKPaymentTransactionState.purchased, strTxtid: transaction.t, strJson: <#T##String#>)
-                   self.navigationController?.popViewController(animated: true)
-                  // delegate.didBuyColorsCollection(collectionIndex: selectedProductIndex)
-                   
-               case SKPaymentTransactionState.failed:
-                   print("Transaction Failed");
-                   SKPaymentQueue.default().finishTransaction(transaction)
-                   transactionInProgress = false
-                   dismissAlert()
-                   
-               default:
-                   print(transaction.transactionState.rawValue)
-               }
-           }
-       }
+//
+//    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+//        print(transactions)
+//        for transaction in transactions {
+//               switch transaction.transactionState {
+//               case SKPaymentTransactionState.purchased:
+//                   print("Transaction completed successfully.")
+//                   SKPaymentQueue.default().finishTransaction(transaction)
+//                   transactionInProgress = false
+//                   dismissAlert()
+//                  // TransectionSucess(strstatus: SKPaymentTransactionState.purchased, strTxtid: transaction.t, strJson: <#T##String#>)
+//                   self.navigationController?.popViewController(animated: true)
+//                  // delegate.didBuyColorsCollection(collectionIndex: selectedProductIndex)
+//
+//               case SKPaymentTransactionState.failed:
+//                   print("Transaction Failed");
+//                   SKPaymentQueue.default().finishTransaction(transaction)
+//                   transactionInProgress = false
+//                   dismissAlert()
+//
+//               default:
+//                   print(transaction.transactionState.rawValue)
+//               }
+//           }
+//       }
 }
 
 

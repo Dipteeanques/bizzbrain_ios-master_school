@@ -33,6 +33,7 @@ class CategoryDetailsController: UIViewController {
     @IBOutlet weak var tblCatDetails: UITableView!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var lblInfo: UILabel!
     
     var cate_id = Int()
     var url: URL?
@@ -66,9 +67,16 @@ class CategoryDetailsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(strMonthset)
         setDefault()
+        print(strMonthset)
+        if strMonthset == "Paid"{
+            btnSubscribe.setTitle("Contact Us", for: .normal)
+            lblPlese.isHidden = true
+            lblInfo.isHidden = true
+            lblOnline.isHidden = true
+//            getCall()
+        }
+        
 //        getCall()
 //        Getplan()
    //     getSubscribe()
@@ -153,6 +161,7 @@ class CategoryDetailsController: UIViewController {
                 if success == true {
                     let data = json.value(forKey: "data")as! NSDictionary
                     self.strNumber = data.value(forKey: "contact_us_phone_number")as! String
+                    self.lblInfo.text = "Please contact to Administration" + "\n\(self.strNumber)"
                 }
           }
     }
@@ -369,33 +378,41 @@ class CategoryDetailsController: UIViewController {
        }
     
     @IBAction func btnSubscribeAction(_ sender: UIButton) {
-        PriceZire()
-        return;
-            if self.strMonthset == "Free" {
-                PriceZire()
-            }
-            else {
-                if priceCheck == "0" {
-                     PriceZire()
-                }
-                else {
-                    if self.subcategory_type == "maincategory" {
-                        let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
-                        obj.cat_id = cate_id
-                        obj.TypeCate = self.subcategory_type
-                        obj.arrCodeSKU = arrPriceCodeSKU
-                        obj.arrPayment = arrPayment
-                        self.navigationController?.pushViewController(obj, animated: false)
-                    }
-                    else {let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
-                        obj.cat_id = cate_id
-                        obj.TypeCate = "subcategory"
-                        obj.arrCodeSKU = arrPriceCodeSKU
-                        obj.arrPayment = arrPayment
-                        self.navigationController?.pushViewController(obj, animated: false)
-                    }
-                }
-            }
+        if strMonthset == "Paid"{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "TermsSupporPrivacyController")as! TermsSupporPrivacyController
+            obj.Common = "support"
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        else{
+            PriceZire()
+            return;
+        }
+
+//            if self.strMonthset == "Free" {
+//                PriceZire()
+//            }
+//            else {
+//                if priceCheck == "0" {
+//                     PriceZire()
+//                }
+//                else {
+//                    if self.subcategory_type == "maincategory" {
+//                        let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
+//                        obj.cat_id = cate_id
+//                        obj.TypeCate = self.subcategory_type
+//                        obj.arrCodeSKU = arrPriceCodeSKU
+//                        obj.arrPayment = arrPayment
+//                        self.navigationController?.pushViewController(obj, animated: false)
+//                    }
+//                    else {let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
+//                        obj.cat_id = cate_id
+//                        obj.TypeCate = "subcategory"
+//                        obj.arrCodeSKU = arrPriceCodeSKU
+//                        obj.arrPayment = arrPayment
+//                        self.navigationController?.pushViewController(obj, animated: false)
+//                    }
+//                }
+//            }
        // }
     }
     
@@ -482,14 +499,14 @@ extension CategoryDetailsController : UITableViewDelegate,UITableViewDataSource 
     }
       
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == tblPlan {
-            let product = arrPricecodeList[indexPath.row]
-            let price = (product as AnyObject).value(forKey: "price")as! String
-            let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
-            obj.selectedPriceCode = price
-           // obj.TypeCate = self.subcategory_type
-            self.navigationController?.pushViewController(obj, animated: false)
-        }
+//        if tableView == tblPlan {
+//            let product = arrPricecodeList[indexPath.row]
+//            let price = (product as AnyObject).value(forKey: "price")as! String
+//            let obj = self.storyboard?.instantiateViewController(withIdentifier: "IAPurchaceViewController")as! IAPurchaceViewController
+//            obj.selectedPriceCode = price
+//           // obj.TypeCate = self.subcategory_type
+//            self.navigationController?.pushViewController(obj, animated: false)
+//        }
     }
     
      func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

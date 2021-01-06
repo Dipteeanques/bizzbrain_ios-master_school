@@ -118,6 +118,9 @@ class loginWithStudentViewController: UIViewController {
                         let standard = data.value(forKey: "standard")as! String
                         let school_logo = data.value(forKey:"school_logo")as! String
                         let user_id = data.value(forKey: "user_id")as! Int
+                        let firebase_email = data.value(forKey: "firebase_email")as? String
+                        let firebase_id = data.value(forKey: "firebase_id")as? String
+                        let firebase_password = data.value(forKey: "firebase_password")as? String
                         let FinalToken = "Bearer " + token
                         loggdenUser.setValue(profile, forKey: PROFILEMAIN)
                         loggdenUser.setValue(classs, forKey: CLASS)
@@ -129,6 +132,9 @@ class loginWithStudentViewController: UIViewController {
                         loggdenUser.set(FinalToken, forKey: TOKEN)
                         loggdenUser.setValue(school_logo, forKey: SCHOOL_LOGO)
                         loggdenUser.setValue(user_id, forKey: USER_ID)
+                        loggdenUser.setValue(firebase_email, forKey: FIREBASE_EMAIL)
+                        loggdenUser.setValue(firebase_id, forKey: SENDER_ID)
+                        loggdenUser.setValue(firebase_password, forKey: FIREBASE_PASSWORD)
                         self.appDel.gotoStudent()
                         self.activity.isHidden = true
                         self.activity.stopAnimating()

@@ -112,14 +112,28 @@ extension StudentSearchViewController: UITableViewDelegate,UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = arrResults[indexPath.row]
-        let cat_id = data.id
-        let strTitle = data.title
-        let strImage = data.image
-        let obj = self.storyboard?.instantiateViewController(withIdentifier: "SubcategoryController")as! SubcategoryController
-        obj.category_id = cat_id
-        obj.strTitle = strTitle
-        obj.strImage = strImage
-        self.navigationController?.pushViewController(obj, animated: true)
+        print(data)
+        let category_type = data.category_type
+        if category_type == "sub_category"{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "CategoryDetailsController")as! CategoryDetailsController
+            obj.strMonthset = data.type
+            obj.cate_id = data.id
+            obj.strImage = data.image
+            //            obj.subcategory_type = "subcategory"
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        else{
+            let cat_id = data.id
+            let strTitle = data.title
+            let strImage = data.image
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "SubcategoryController")as! SubcategoryController
+            obj.category_id = cat_id
+            obj.strTitle = strTitle
+            obj.strImage = strImage
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        
+
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

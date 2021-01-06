@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import StoreKit
 
-class SubcategoryController: UIViewController,SKProductsRequestDelegate, SKPaymentTransactionObserver {
+class SubcategoryController: UIViewController {//,SKProductsRequestDelegate, SKPaymentTransactionObserver
     
     @IBOutlet weak var btnMoreSubscribe: UIButton!
     @IBOutlet weak var btnSubscribe: UIButton!
@@ -77,9 +77,9 @@ class SubcategoryController: UIViewController,SKProductsRequestDelegate, SKPayme
         productIDs.append("1Month")
        // productIDs.append("iapdemo_extra_colors_col2")
         
-        requestProductInfo()
-        
-        SKPaymentQueue.default().add(self)
+//        requestProductInfo()
+//
+//        SKPaymentQueue.default().add(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -166,19 +166,19 @@ class SubcategoryController: UIViewController,SKProductsRequestDelegate, SKPayme
     */
     
     // MARK: Custom method implementation
-    
-    func requestProductInfo() {
-        if SKPaymentQueue.canMakePayments() {
-            let productIdentifiers = NSSet(array: productIDs as [Any])
-            let productRequest = SKProductsRequest(productIdentifiers: productIdentifiers as Set<NSObject> as Set<NSObject> as! Set<String>)
-            
-            productRequest.delegate = self
-            productRequest.start()
-        }
-        else {
-            print("Cannot perform In App Purchases.")
-        }
-    }
+//
+//    func requestProductInfo() {
+//        if SKPaymentQueue.canMakePayments() {
+//            let productIdentifiers = NSSet(array: productIDs as [Any])
+//            let productRequest = SKProductsRequest(productIdentifiers: productIdentifiers as Set<NSObject> as Set<NSObject> as! Set<String>)
+//
+//            productRequest.delegate = self
+//            productRequest.start()
+//        }
+//        else {
+//            print("Cannot perform In App Purchases.")
+//        }
+//    }
     
     
     func showActions() {
@@ -207,46 +207,46 @@ class SubcategoryController: UIViewController,SKProductsRequestDelegate, SKPayme
     
     // MARK: SKProductsRequestDelegate method implementation
     
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        if response.products.count != 0 {
-            for product in response.products {
-                productsArray.append(product)
-            }
-            
-            //tblProducts.reloadData()
-        }
-        else {
-            print("There are no products.")
-        }
-        
-        if response.invalidProductIdentifiers.count != 0 {
-            print(response.invalidProductIdentifiers.description)
-        }
-    }
+//    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+//        if response.products.count != 0 {
+//            for product in response.products {
+//                productsArray.append(product)
+//            }
+//
+//            //tblProducts.reloadData()
+//        }
+//        else {
+//            print("There are no products.")
+//        }
+//
+//        if response.invalidProductIdentifiers.count != 0 {
+//            print(response.invalidProductIdentifiers.description)
+//        }
+//    }
     
     
     // MARK: SKPaymentTransactionObserver method implementation
     
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-                for transaction in transactions as! [SKPaymentTransaction] {
-            switch transaction.transactionState {
-            case SKPaymentTransactionState.purchased:
-                print("Transaction completed successfully.")
-                SKPaymentQueue.default().finishTransaction(transaction)
-                transactionInProgress = false
-               // delegate.didBuyColorsCollection(collectionIndex: selectedProductIndex)
-                
-                
-            case SKPaymentTransactionState.failed:
-                print("Transaction Failed");
-                SKPaymentQueue.default().finishTransaction(transaction)
-                transactionInProgress = false
-                
-            default:
-                print(transaction.transactionState.rawValue)
-            }
-        }
-    }
+//    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+//                for transaction in transactions as! [SKPaymentTransaction] {
+//            switch transaction.transactionState {
+//            case SKPaymentTransactionState.purchased:
+//                print("Transaction completed successfully.")
+//                SKPaymentQueue.default().finishTransaction(transaction)
+//                transactionInProgress = false
+//               // delegate.didBuyColorsCollection(collectionIndex: selectedProductIndex)
+//                
+//                
+//            case SKPaymentTransactionState.failed:
+//                print("Transaction Failed");
+//                SKPaymentQueue.default().finishTransaction(transaction)
+//                transactionInProgress = false
+//                
+//            default:
+//                print(transaction.transactionState.rawValue)
+//            }
+//        }
+//    }
 }
 
 
@@ -311,6 +311,7 @@ extension SubcategoryController: UICollectionViewDelegate,UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(self.arrSubcategory[indexPath.row])
         let strimage = (self.arrSubcategory[indexPath.row]as AnyObject).value(forKey: "image")as? String
         let cat_id = (self.arrSubcategory[indexPath.row]as AnyObject).value(forKey: "id") as? Int
         let Title = (self.arrSubcategory[indexPath.row]as AnyObject).value(forKey: "title") as? String

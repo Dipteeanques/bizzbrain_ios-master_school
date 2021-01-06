@@ -21,6 +21,10 @@ class HomeViewController: UIViewController,selectedIndexDelegete {
             imgInstructor.clipsToBounds = true
         }
     }
+    
+    @IBOutlet weak var btnInstruct: UIButton!
+    @IBOutlet weak var lblInstruct: UILabel!
+    
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var subscriptionCollectionView: UICollectionView!
     @IBOutlet weak var viewNewarrival: UIView!
@@ -190,11 +194,22 @@ class HomeViewController: UIViewController,selectedIndexDelegete {
         let strimage = (Maincategoryarr[index]as AnyObject).value(forKey: "image")as? String
         let cat_id = (Maincategoryarr[index]as AnyObject).value(forKey: "id") as? Int
         let Title = (Maincategoryarr[index]as AnyObject).value(forKey: "title") as? String
-        let obj = self.storyboard?.instantiateViewController(withIdentifier: "AddCatSubcategorycontroller")as! AddCatSubcategorycontroller
-        obj.category_id = cat_id!
-        obj.strTitle = Title!
-        obj.strImage = strimage!
-        self.navigationController?.pushViewController(obj, animated: true)
+        let type = (Maincategoryarr[index]as AnyObject).value(forKey: "type") as? String
+        if type == "Paid"{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "CategoryDetailsController")as! CategoryDetailsController
+            obj.strMonthset = type ?? ""
+            obj.cate_id = cat_id!
+            obj.strImage = strimage!
+//            obj.subcategory_type = "subcategory"
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        else{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "AddCatSubcategorycontroller")as! AddCatSubcategorycontroller
+            obj.category_id = cat_id!
+            obj.strTitle = Title!
+            obj.strImage = strimage!
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
     }
     
     @IBAction func btnInstructAll(_ sender: Any) {
@@ -315,7 +330,11 @@ extension HomeViewController: UICollectionViewDelegate,UICollectionViewDataSourc
             }
         }
         else if collectionView == collectionViewInstruct {
-            
+            if arrInstruct.count == 0{
+                btnInstruct.isHidden = true
+                lblInstruct.isHidden = true
+                collectionViewInstruct.isHidden = true
+            }
                 return arrInstruct.count
         }
         else if collectionView == collectionBanner {

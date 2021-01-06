@@ -151,6 +151,7 @@ extension MainInstructorViewController: UICollectionViewDelegate,UICollectionVie
         let id = (selected as AnyObject).value(forKey: "id")as! Int
         let title = (selected as AnyObject).value(forKey: "title")as! String
         let image = (selected as AnyObject).value(forKey: "image")as! String
+        print(selected)
         
         let obj = self.storyboard?.instantiateViewController(withIdentifier: "CategoryDetailsController")as! CategoryDetailsController
         obj.cate_id = id

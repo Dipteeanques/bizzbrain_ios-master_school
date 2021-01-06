@@ -12,7 +12,7 @@ import Firebase
 import FirebaseMessaging
 import Fabric
 import Reachability
-import SwiftyStoreKit
+//import SwiftyStoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -59,43 +59,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.extendSplashScreenPresentation()
             }
         }
-        setupIAP()
+//        setupIAP()
         return true
     }
     
-    func setupIAP() {
-
-        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
-
-            for purchase in purchases {
-                switch purchase.transaction.transactionState {
-                case .purchased, .restored:
-                    let downloads = purchase.transaction.downloads
-                    if !downloads.isEmpty {
-                        SwiftyStoreKit.start(downloads)
-                    } else if purchase.needsFinishTransaction {
-                        // Deliver content from server, then:
-                        SwiftyStoreKit.finishTransaction(purchase.transaction)
-                    }
-                    print("\(purchase.transaction.transactionState.debugDescription): \(purchase.productId)")
-                case .failed, .purchasing, .deferred:
-                    break // do nothing
-                @unknown default:
-                    break // do nothing
-                }
-            }
-        }
-        
-        SwiftyStoreKit.updatedDownloadsHandler = { downloads in
-
-            // contentURL is not nil if downloadState == .finished
-            let contentURLs = downloads.compactMap { $0.contentURL }
-            if contentURLs.count == downloads.count {
-                print("Saving: \(contentURLs)")
-                SwiftyStoreKit.finishTransaction(downloads[0].transaction)
-            }
-        }
-    }
+//    func setupIAP() {
+//
+//        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+//
+//            for purchase in purchases {
+//                switch purchase.transaction.transactionState {
+//                case .purchased, .restored:
+//                    let downloads = purchase.transaction.downloads
+//                    if !downloads.isEmpty {
+//                        SwiftyStoreKit.start(downloads)
+//                    } else if purchase.needsFinishTransaction {
+//                        // Deliver content from server, then:
+//                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+//                    }
+//                    print("\(purchase.transaction.transactionState.debugDescription): \(purchase.productId)")
+//                case .failed, .purchasing, .deferred:
+//                    break // do nothing
+//                @unknown default:
+//                    break // do nothing
+//                }
+//            }
+//        }
+//
+//        SwiftyStoreKit.updatedDownloadsHandler = { downloads in
+//
+//            // contentURL is not nil if downloadState == .finished
+//            let contentURLs = downloads.compactMap { $0.contentURL }
+//            if contentURLs.count == downloads.count {
+//                print("Saving: \(contentURLs)")
+//                SwiftyStoreKit.finishTransaction(downloads[0].transaction)
+//            }
+//        }
+//    }
     
     
 
@@ -227,7 +227,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("FCM Token : \(fcmToken)")
         loggdenUser.set(fcmToken, forKey: FCM)
     }

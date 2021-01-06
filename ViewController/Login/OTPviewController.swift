@@ -108,6 +108,8 @@ class OTPviewController: UIViewController {
                             let school_logo = data.value(forKey: "school_logo")as! String
                             loggdenUser.set(phone_number, forKey: PHONE_NUMBER)
                             let name = data.value(forKey: "name")as! String
+                            let firebase_id = data.value(forKey: "firebase_id")as? String
+                            let user_id = data.value(forKey: "user_id")
                             let token = data.value(forKey: "token")as! String
                             let FinalToken = "Bearer " + token
                             loggdenUser.set(profile, forKey: PROFILE_IMAGE)
@@ -117,6 +119,8 @@ class OTPviewController: UIViewController {
                             loggdenUser.set(FinalToken, forKey: TOKEN)
                             loggdenUser.set(id, forKey: STUDENT_ID)
                             loggdenUser.set(0, forKey: ROLE_ID)
+                            loggdenUser.setValue(user_id, forKey: USER_ID)
+                            loggdenUser.setValue(firebase_id, forKey: SENDER_ID)
                             self.appDel.gotoParent()
                             self.activity.isHidden = true
                             self.activity.stopAnimating()

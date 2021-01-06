@@ -9,8 +9,14 @@
 import UIKit
 import SDWebImage
 import Alamofire
+import Firebase
+import FirebaseAuth
 
 class ParentViewController: UIViewController {
+    
+    var arrgetFirebaseDetailsRoot : getFirebaseDetailsRoot?
+    var arrFirebaseSave : getFirebaseSaveRoot?
+    
     @IBOutlet weak var imgProfile: UIImageView!
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var logoImg: UIImageView!
@@ -51,8 +57,110 @@ class ParentViewController: UIViewController {
         img_curve.tintColor = UIColor(red: 0.18, green: 0.68, blue: 0.02, alpha: 1.00)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.StudentSelection), name: NSNotification.Name(rawValue: "StudentSelection"), object: nil)
+        
+        let firebaseId = loggdenUser.string(forKey: SENDER_ID)
+        print(firebaseId)
+        if firebaseId == ""{
+            GetFirebaseDetails()
+            print("empty")
+        }
+        else{
+            print("not empty")
+        }
         setdefault()
+        
+        
         // Do any additional setup after loading the view.
+    }
+    func GetFirebaseDetails() {
+        let token = loggdenUser.value(forKey: TOKEN)as! String
+        let headers: HTTPHeaders = ["Xapi": Xapi,
+                                    "Authorization":token]
+        var type = String()
+        if  ((loggdenUser.value(forKey: ROLE_ID) as! Int) == 6){
+            type = "Student"
+        }
+        else{
+            type = "Parent"
+        }
+        let params = ["user_id":loggdenUser.value(forKey: USER_ID),"type":type]
+        
+        wc.callSimplewebservice(url: getFirebaseDetails, parameters: params as [String : Any], headers: headers, fromView: self.view, isLoading: true) { (success, response:getFirebaseDetailsRoot?) in
+            if success {
+                print("response:",response)
+                let suc = response?.success
+                if suc == true {
+                    self.arrgetFirebaseDetailsRoot = response!
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_id, forKey: SENDER_ID)
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_email, forKey: FIREBASE_EMAIL)
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_password, forKey: FIREBASE_PASSWORD)
+                    let email = self.arrgetFirebaseDetailsRoot?.data.firebase_email
+                    let password = self.arrgetFirebaseDetailsRoot?.data.firebase_password
+                    
+                    Auth.auth().signIn(withEmail: email!, password: password!) { (user, error) in
+                        // guard against errors and optionals
+                        guard error == nil else {
+                            print(error?.localizedDescription)
+                            return }
+                        guard let user = user else {
+                            print(error?.localizedDescription)
+                            return }
+                        //                        print("id:",user.user.uid)
+                        
+                        
+                        Messaging.messaging().token { token, error in
+                            if let error = error {
+                                print("Error fetching FCM registration token: \(error)")
+                                return
+                            } else if let token = token {
+                                let ref2 = Constants.refs2.databaseChats.childByAutoId()
+                                let senderName = ((loggdenUser.string(forKey: NAME) ?? "") + "(\((loggdenUser.string(forKey: EMAIL) ?? "")))")
+                                let message1 = ["device_token":token,"id":ref2.key,"username":senderName]
+                                print("message1",message1)
+                                ref2.setValue(message1)
+                                print("FCM registration token: \(token)")
+                                let token = "Remote FCM registration token: \(token)"
+                                print(token)
+                                self.GetFirebaseSave(firebase_id:ref2.key! , firebase_email: email!)
+                                
+                            }
+                        }
+                        
+                    }
+                }
+                else {
+                    print("jekil")
+                }
+            }
+            else{
+                
+            }
+        }
+    }
+    
+    func GetFirebaseSave(firebase_id:String,firebase_email:String) {
+        let token = loggdenUser.value(forKey: TOKEN)as! String
+        let headers: HTTPHeaders = ["Xapi": Xapi,
+                                    "Authorization":token]
+       
+        wc.callSimplewebservice(url: FirebaseSave, parameters: ["firebase_id":firebase_id,"firebase_email":firebase_email], headers: headers, fromView: self.view, isLoading: true) { (success, response:getFirebaseSaveRoot?) in
+            if success {
+                print("response:",response)
+                let suc = response?.success
+                if suc == true {
+                    self.arrFirebaseSave = response!
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_id, forKey: SENDER_ID)
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_email, forKey: FIREBASE_EMAIL)
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_password, forKey: FIREBASE_PASSWORD)
+                }
+                else {
+                    print("jekil")
+                }
+            }
+            else{
+
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -260,6 +368,13 @@ extension ParentViewController: UICollectionViewDelegate,UICollectionViewDataSou
             else if indexPath.row == 14 {
                 let obj = self.storyboard?.instantiateViewController(withIdentifier: "NoticeViewController")as! NoticeViewController
                 obj.arrFilterSearchDatum = arrFilterSearchDatum
+                self.navigationController?.pushViewController(obj, animated: true)
+            }
+            else if indexPath.row == 15{
+                NavigateVideoConference()
+            }
+            else if indexPath.row == 16{
+                let obj = self.storyboard?.instantiateViewController(withIdentifier: "ConverstationsVC")as! ConverstationsVC
                 self.navigationController?.pushViewController(obj, animated: true)
             }
             else {

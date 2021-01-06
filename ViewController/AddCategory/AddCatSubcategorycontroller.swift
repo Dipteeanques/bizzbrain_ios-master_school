@@ -225,11 +225,12 @@ extension AddCatSubcategorycontroller: UICollectionViewDelegate,UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selected = arrSubcategory[indexPath.item]
+        print(selected)
         let id = (selected as AnyObject).value(forKey: "id") as? Int
         let title = (selected as AnyObject).value(forKey: "title") as? String
         let image = (selected as AnyObject).value(forKey: "image") as? String
 //        let topic = (selected as AnyObject).value(forKey: "topic_count") as? Int
-//        let type = (selected as AnyObject).value(forKey: "type") as? String
+        let type = (selected as AnyObject).value(forKey: "type") as? String
         let cell = collectionView.cellForItem(at: indexPath)as! catSubcatCollectionCell
         let lable = cell.lblSubscribe.text
         print(lable)
@@ -242,6 +243,7 @@ extension AddCatSubcategorycontroller: UICollectionViewDelegate,UICollectionView
         }
         else {
             let obj = self.storyboard?.instantiateViewController(withIdentifier: "CategoryDetailsController")as! CategoryDetailsController
+            obj.strMonthset = type ?? ""
             obj.cate_id = id!
             obj.strImage = image!
             obj.subcategory_type = "subcategory"

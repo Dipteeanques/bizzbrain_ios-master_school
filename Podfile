@@ -1,4 +1,4 @@
- platform :ios, '10.0'
+# platform :ios, '9.0'
 
 target 'bizzbrains' do
   use_frameworks!
@@ -12,6 +12,14 @@ target 'bizzbrains' do
  pod 'Fabric', '~> 1.10.2'
  pod 'Crashlytics', '~> 3.14.0'
  pod 'ReachabilitySwift'
- pod 'SwiftyStoreKit'
+# pod 'SwiftyStoreKit'
  pod 'DKImagePickerController'
+ pod 'SJSegmentedScrollView'
+ pod 'JJFloatingActionButton'
+ pod 'Kingfisher'
+ pod 'MessageKit'
+ pod 'Firebase/Core'
+ pod 'Firebase/Storage'
+ pod 'Firebase/Database'
+ pod 'Firebase/Firestore'
 end

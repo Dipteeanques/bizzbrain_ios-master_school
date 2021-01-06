@@ -9,9 +9,15 @@
 import UIKit
 import DKImagePickerController
 import Alamofire
+import FirebaseAuth
+import Firebase
+
 
 class StudentZoneViewController: UIViewController {
     
+    var arrFirebaseSave : getFirebaseSaveRoot?
+    var wc = Webservice.init()
+    var arrgetFirebaseDetailsRoot : getFirebaseDetailsRoot?
     @IBOutlet weak var img_schoolLogo: UIImageView!
     @IBOutlet var collectionview: UICollectionView!
     @IBOutlet weak var tblView: UITableView!
@@ -34,15 +40,113 @@ class StudentZoneViewController: UIViewController {
     
 //    @IBOutlet weak var coll_height: NSLayoutConstraint!
     
-    var arrCategory = [["icon":#imageLiteral(resourceName: "image"),"name":"Student Profile","color":redcolor],["icon":#imageLiteral(resourceName: "event"),"name":"Upcoming Events","color":bluecolor],["icon":#imageLiteral(resourceName: "assign"),"name":"Assignments","color":orangecolor],["icon":#imageLiteral(resourceName: "calendar"),"name":"Timetable","color":purplecolor],["icon":#imageLiteral(resourceName: "datasheet"),"name":"Data Sheet","color":redcolor],["icon":#imageLiteral(resourceName: "assign"),"name":"Exam Results","color":bluecolor],["icon":#imageLiteral(resourceName: "attendce"),"name":"Attendences","color":redcolor],["icon":#imageLiteral(resourceName: "documents-symbol"),"name":"Note/Exam Papers","color":bluecolor],["icon":#imageLiteral(resourceName: "fashion"),"name":"Dress Vendors","color":orangecolor],["icon":#imageLiteral(resourceName: "ic_transport"),"name":"Transport Details","color":purplecolor],["icon":#imageLiteral(resourceName: "VideoLecture"),"name":"Video Lecture","color":redcolor],["icon":#imageLiteral(resourceName: "Fee"),"name":"Fee Payment","color":bluecolor],["icon":#imageLiteral(resourceName: "history1"),"name":"Payment History","color":orangecolor],["icon":#imageLiteral(resourceName: "videocon"),"name":"Video Conference","color":bluecolor],["icon":#imageLiteral(resourceName: "chat"),"name":"Chat","color":redcolor]]
+    var arrCategory = [["icon":#imageLiteral(resourceName: "image"),"name":"Student Profile","color":redcolor],["icon":#imageLiteral(resourceName: "event"),"name":"Upcoming Events","color":bluecolor],["icon":#imageLiteral(resourceName: "assign"),"name":"Assignments","color":orangecolor],["icon":#imageLiteral(resourceName: "calendar"),"name":"Timetable","color":purplecolor],["icon":#imageLiteral(resourceName: "datasheet"),"name":"Data Sheet","color":redcolor],["icon":#imageLiteral(resourceName: "assign"),"name":"Exam Results","color":bluecolor],["icon":#imageLiteral(resourceName: "attendce"),"name":"Attendences","color":redcolor],["icon":#imageLiteral(resourceName: "documents-symbol"),"name":"Note/Exam Papers","color":bluecolor],["icon":#imageLiteral(resourceName: "fashion"),"name":"Dress Vendors","color":orangecolor],["icon":#imageLiteral(resourceName: "ic_transport"),"name":"Transport Details","color":purplecolor],["icon":#imageLiteral(resourceName: "VideoLecture"),"name":"Video Lecture","color":redcolor],["icon":#imageLiteral(resourceName: "Fee"),"name":"Fee Payment","color":bluecolor],["icon":#imageLiteral(resourceName: "history1"),"name":"Payment History","color":orangecolor],["icon":#imageLiteral(resourceName: "notification"),"name":"Notification","color":purplecolor,"index":14],["icon":#imageLiteral(resourceName: "videocon"),"name":"Video Conference","color":bluecolor],["icon":#imageLiteral(resourceName: "chat"),"name":"Chat","color":redcolor]]
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 //        let width = collectionview.bounds.size.width / 3
 //        coll_height.constant = width * CGFloat(arrCategory.count)
+        
+        let firebaseId = loggdenUser.string(forKey: SENDER_ID)
+        print(firebaseId)
+        if firebaseId == ""{
+            GetFirebaseDetails()
+            print("empty")
+        }
+        else{
+            print("not empty")
+        }
         setDefault()
        
+    }
+    
+    func GetFirebaseDetails() {
+        let token = loggdenUser.value(forKey: TOKEN)as! String
+        let headers: HTTPHeaders = ["Xapi": Xapi,
+                                    "Authorization":token]
+        var type = String()
+        if  ((loggdenUser.value(forKey: ROLE_ID) as! Int) == 6){
+            type = "Student"
+        }
+        let params = ["user_id":loggdenUser.value(forKey: USER_ID),"type":type]
+        
+        wc.callSimplewebservice(url: getFirebaseDetails, parameters: params as [String : Any], headers: headers, fromView: self.view, isLoading: true) { (success, response:getFirebaseDetailsRoot?) in
+            if success {
+                print("response:",response)
+                let suc = response?.success
+                if suc == true {
+                    self.arrgetFirebaseDetailsRoot = response!
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_id, forKey: SENDER_ID)
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_email, forKey: FIREBASE_EMAIL)
+                    loggdenUser.setValue(self.arrgetFirebaseDetailsRoot?.data.firebase_password, forKey: FIREBASE_PASSWORD)
+                    let email = self.arrgetFirebaseDetailsRoot?.data.firebase_email
+                    let password = self.arrgetFirebaseDetailsRoot?.data.firebase_password
+                    
+                    Auth.auth().signIn(withEmail: email!, password: password!) { (user, error) in
+                        // guard against errors and optionals
+                        guard error == nil else {
+                            print(error?.localizedDescription)
+                            return }
+                        guard let user = user else {
+                            print(error?.localizedDescription)
+                            return }
+                        //                        print("id:",user.user.uid)
+                        
+                        
+                        Messaging.messaging().token { token, error in
+                            if let error = error {
+                                print("Error fetching FCM registration token: \(error)")
+                                return
+                            } else if let token = token {
+                                let ref2 = Constants.refs2.databaseChats.childByAutoId()
+                                let senderName = ((loggdenUser.string(forKey: NAME) ?? "") + "(\((loggdenUser.string(forKey: EMAIL) ?? "")))")
+                                let message1 = ["device_token":token,"id":ref2.key,"username":senderName]
+                                print("message1",message1)
+                                ref2.setValue(message1)
+                                print("FCM registration token: \(token)")
+                                let token = "Remote FCM registration token: \(token)"
+                                print(token)
+                                self.GetFirebaseSave(firebase_id:ref2.key! , firebase_email: email!)
+                                
+                            }
+                        }
+                        
+                    }
+                }
+                else {
+                    print("jekil")
+                }
+            }
+            else{
+                
+            }
+        }
+    }
+    
+    func GetFirebaseSave(firebase_id:String,firebase_email:String) {
+        let token = loggdenUser.value(forKey: TOKEN)as! String
+        let headers: HTTPHeaders = ["Xapi": Xapi,
+                                    "Authorization":token]
+       
+        wc.callSimplewebservice(url: FirebaseSave, parameters: ["firebase_id":firebase_id,"firebase_email":firebase_email], headers: headers, fromView: self.view, isLoading: true) { (success, response:getFirebaseSaveRoot?) in
+            if success {
+                print("response:",response)
+                let suc = response?.success
+                if suc == true {
+                    self.arrFirebaseSave = response!
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_id, forKey: SENDER_ID)
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_email, forKey: FIREBASE_EMAIL)
+                    loggdenUser.setValue(self.arrFirebaseSave?.data.firebase_password, forKey: FIREBASE_PASSWORD)
+                }
+                else {
+                    print("jekil")
+                }
+            }
+            else{
+
+            }
+        }
     }
     
     func setDefault(){
@@ -257,6 +361,18 @@ extension StudentZoneViewController: UICollectionViewDelegate,UICollectionViewDa
         }
         else if indexPath.row == 12{
             let obj = self.storyboard?.instantiateViewController(withIdentifier: "PaymentHistoryVC")as! PaymentHistoryVC
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        else if indexPath.row == 13{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "NoticeViewController")as! NoticeViewController
+//            obj.arrFilterSearchDatum = arrFilterSearchDatum
+            self.navigationController?.pushViewController(obj, animated: true)
+        }
+        else if indexPath.row == 14{
+            NavigateVideoConference()
+        }
+        else if indexPath.row == 15{
+            let obj = self.storyboard?.instantiateViewController(withIdentifier: "ConverstationsVC")as! ConverstationsVC
             self.navigationController?.pushViewController(obj, animated: true)
         }
     }

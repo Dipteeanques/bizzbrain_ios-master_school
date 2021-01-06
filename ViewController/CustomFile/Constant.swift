@@ -109,7 +109,11 @@ let GetInstructorMainCategory = Domain + "GetInstructorMainCategory"
 
 let get_fessdetail = Domain + "get_fees_details"
 let get_fees_payment_history = Domain + "get_fees_payment_history"
-
+let getUpcomingMeeting = Domain + "VideoMeeting/getUpcomingMeeting"
+let getOlderMeeting = Domain + "VideoMeeting/getOlderMeeting"
+let getTeacherList = Domain + "teacher_list"
+let FirebaseSave = Domain + "firebase_save"
+let getFirebaseDetails = Domain + "getFirebaseDetails"
 
 func generateCustomerID() -> String
 {
@@ -149,6 +153,10 @@ let PROFILE_IMAGE     = "profile"
 let SCHOOL_LOGO       = "school_logo"
 let STUDENT_ID        = "STUDENT_ID"
 let USER_ID           = "USER_ID"
+let FIREBASE_EMAIL    = "FIREBASE_EMAIL"
+let SENDER_ID       = "FIREBASE_ID"
+let FIREBASE_PASSWORD = "FIREBASE_PASSWORD"
+let RECIEVER_ID = "RECIEVER_ID"
 
 let all_Ids = "all_Ids"
 
